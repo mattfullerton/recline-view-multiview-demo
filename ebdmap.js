@@ -37,17 +37,17 @@ dataset.fetch().done(function(allDataset) {
     })
   });
 
-  var dataset = new recline.Model.Dataset({
+  var thedataset = new recline.Model.Dataset({
     records: allDataset.records.map(function(x) {
       return x.toJSON();
     })
   });
 
   var applyFilter = function() {
-    dataset.records.reset(allDataset.records.map(function(x) {
+    thedataset.records.reset(allDataset.records.map(function(x) {
       return x.toJSON();
     }));
-    var filteredRecords = dataset.records.models;
+    var filteredRecords = thedataset.records.models;
     _.each(filters, function(filter) {
       var val = $('#' + filter.id).val();
       if (val === '') {
@@ -57,7 +57,7 @@ dataset.fetch().done(function(allDataset) {
         return record.get(filter.column).indexOf(val) !== -1;
       });
     });
-    dataset.records.reset(_.map(filteredRecords, function(x) {
+    thedataset.records.reset(_.map(filteredRecords, function(x) {
       return x.toJSON();
     }));
   };
@@ -79,12 +79,12 @@ dataset.fetch().done(function(allDataset) {
   };
 
   var map = new recline.View.Map({
-    model: dataset,
+    model: thedataset,
     state: mapState
   });
 
   var grid = new recline.View.Grid({
-    model: dataset
+    model: thedataset
   });
 
   map.infobox = function(record) {
@@ -112,7 +112,7 @@ dataset.fetch().done(function(allDataset) {
   };
 
   var myExplorer = new recline.View.MultiView({
-    model: dataset,
+    model: thedataset,
     el: $el,
     views: views,
     sidebarViews: [],
@@ -127,8 +127,6 @@ dataset.fetch().done(function(allDataset) {
   $('.header').children().hide();
   $('.navigation').show();
 
-  //Force autozoom
-  map.redraw('reset');
   //Load previously invisible tiles
   map.map.invalidateSize();
 

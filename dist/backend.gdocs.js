@@ -11,7 +11,7 @@ if (typeof module !== 'undefined' && module != null && typeof require !== 'undef
 (function(my) {
   my.__type__ = 'gdocs';
 
-  var Deferred = _.isUndefined(this.jQuery) ? _.Deferred : jQuery.Deferred;
+  var Deferred = (typeof jQuery !== "undefined" && jQuery.Deferred) || _.Deferred;
 
   // Fetch data from a Google Docs spreadsheet.
   //
@@ -30,7 +30,8 @@ if (typeof module !== 'undefined' && module != null && typeof require !== 'undef
           titleDfd.resolve({
               spreadsheetTitle: d.feed.title.$t
           });
-      });
+      }) .fail(function(errObj) { titleDfd.reject(errObj); });
+
 
       return titleDfd.promise();
     }()).then(function (response) {
@@ -53,8 +54,9 @@ if (typeof module !== 'undefined' && module != null && typeof require !== 'undef
           fields        : fields,
           useMemoryStore: true
         });
+        
       });
-    });
+    }).fail(function(errObj) { dfd.reject(errObj); });
 
     return dfd.promise();
   };
